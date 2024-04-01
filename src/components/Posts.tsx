@@ -1,9 +1,8 @@
 'use client'
-import { useState } from 'react'
-import { usePathname } from 'next/navigation'
+
+import useSWR from 'swr';
+
 import { formatDate } from 'pliny/utils/formatDate'
-import { CoreContent } from 'pliny/utils/contentlayer'
-import type { Blog } from 'contentlayer/generated'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 
@@ -11,22 +10,34 @@ const locale = 'us-US';
 
 const WORDPRESS_API_URL='https://patolin.com/wp-json/wp/v2';
 
-async function getPosts() {
-    const response = await fetch(
-        `${WORDPRESS_API_URL}/posts`
-    );
-    const posts = await response.json();
-    return posts;
-}
+const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
-export const Posts = async () =>{
-    const posts = await getPosts();
-    if (!posts) return (<p>Cargando.....</p>);
+export const Posts = () =>{
+    
+    const {
+        data: posts,
+        isLoading,
+        error: error,
+      } = useSWR(
+        `${WORDPRESS_API_URL}/posts`,
+        fetcher,
+        { revalidateOnFocus: false, revalidateOnReconnect: false }
+      );
+    
+      if (error) {
+        return <p>Error en la consulta</p>;
+      }
+    
+      if (isLoading) {
+        return <p>.....cargando posts</p>;
+      }
+    
+      
     return (
         <>
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
                 <ul>
-                    {posts.map((post:any) => {
+                    {posts?.map((post:any) => {
                             const postDate = post?.date.split('T')[0];
                             const [Y,m,d] = postDate.split('-');
                             return (
@@ -46,7 +57,7 @@ export const Posts = async () =>{
                                             </Link>
                                         </h3>
                                         <div className="flex flex-wrap">
-                                            {posts.tags?.length>0 && post.tags.map((tag) => <Tag key={tag} text={tag} />)}
+                                            {posts?.tags?.length>0 && post.tags.map((tag) => <Tag key={tag} text={tag} />)}
                                         </div>
                                         </div>
                                         <div className="prose max-w-none text-gray-500 dark:text-gray-400">
