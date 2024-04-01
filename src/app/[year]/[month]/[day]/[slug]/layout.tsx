@@ -1,6 +1,6 @@
 import { Posts } from '@/components/Posts';
 
-export default function Layout({ children }) {
+export default function Layout({ children }: any) {
     return (
       <>
         <div className="space-y-2 pb-8 pt-6 md:space-y-5">

@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 
 
-import { formatDate } from 'pliny/utils/formatDate'
+import { formatDate } from 'pliny/utils/formatDate.js'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 
@@ -54,7 +54,7 @@ export const SinglePost = (props: {slug: String}) =>{
                                             </Link>
                                         </h3>
                                         <div className="flex flex-wrap">
-                                            {posts.tags?.length>0 && post.tags.map((tag) => <Tag key={tag} text={tag} />)}
+                                            {posts.tags?.length>0 && post.tags.map((tag: any) => <Tag key={tag} text={tag} />)}
                                         </div>
                                         </div>
                                         <div className="prose max-w-none text-gray-500 dark:text-gray-400">
