@@ -1,9 +1,9 @@
 'use client'
-import { useState } from 'react'
-import { usePathname } from 'next/navigation'
+
+import useSWR from 'swr';
+
+
 import { formatDate } from 'pliny/utils/formatDate'
-import { CoreContent } from 'pliny/utils/contentlayer'
-import type { Blog } from 'contentlayer/generated'
 import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 
@@ -11,17 +11,27 @@ const locale = 'us-US';
 
 const WORDPRESS_API_URL='https://patolin.com/wp-json/wp/v2';
 
-async function getPosts(slug: String) {
-    const response = await fetch(
-        `${WORDPRESS_API_URL}/posts?slug=${slug}`
-    );
-    const posts = await response.json();
-    return posts;
-}
+const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
-export const SinglePost = async (props: {slug: String}) =>{
-    const posts = await getPosts(props.slug);
-    if (!posts) return (<p>Cargando.....</p>);
+export const SinglePost = (props: {slug: String}) =>{
+    const {
+        data: posts,
+        isLoading,
+        error: error,
+      } = useSWR(
+        `${WORDPRESS_API_URL}/posts?slug=${props.slug}`,
+        fetcher,
+        { revalidateOnFocus: false, revalidateOnReconnect: false }
+      );
+    
+      if (error) {
+        return <p>Error en la consulta</p>;
+      }
+    
+      if (isLoading) {
+        return <p>.....cargando post</p>;
+      }
+
     return (
         <>
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
