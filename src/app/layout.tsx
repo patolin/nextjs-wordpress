@@ -3,12 +3,11 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import {Header} from '@/components/Header';
 import Footer from "@/components/Footer";
-import { Posts } from '@/components/Posts';
 
 import SectionContainer from "@/components/SectionContainer";
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "Patolin Next.js Blog",
   description: "Blog de www.patolin.com",
 };
